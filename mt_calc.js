@@ -42,11 +42,11 @@ function init() {
 
    for (var i = 0; i < calcButtons.length; i++) {
       // Runs the buttonClick() function in response to the "click" event for every button in the calcButton collection. 
-      calcButtons[i].onclick = buttonClick(calcButtons);
+      calcButtons[i].addEventListener("click", buttonClick);
    }
 
    // Runs the calcKeys() function in response to the "keydown" event occuring 
-   // document.getElementById("calcWindow").onkeydown = calcKeys();
+   document.getElementById("calcWindow").addEventListener("keydown", calcKeys);
 }
 
 // Changes what appears in the calculator window when the user clicks the calculator buttons. 
@@ -58,26 +58,66 @@ function buttonClick(e) {
    var calcDecimal = document.getElementById("decimals").value;
 
    // Declares the buttonValue attribute equal to the value attribute of the event object target 
-   var buttonValue = e.target;
+   var buttonValue = e.target.value;
 
-   console.log(buttonValue); 
    switch (buttonValue) {
       case "del":
+         // Deletes the contents of the window 
          calcValue = "";
          break;
       case "bksp":
+         // Erases the last character in the calculator window 
          calcValue = eraseChar(calcValue);
          break;
-      case "enter": 
-         calcValue = " = " + evalEq(calcValue, calcDecimal) + "/n"; 
-         break; 
-      case "prev": 
-         calcValue = lastEq(calcValue); 
-         break; 
+      case "enter":
+         // Calculates the value of the current expression 
+         calcValue += " = " + evalEq(calcValue, calcDecimal) + "\n";
+         break;
+      case "prev":
+         // Copies the last equation in the calculator window 
+         calcValue = lastEq(calcValue);
+         break;
       default:
-         calcValue = calcValue + buttonValue; 
+         // Appends the calculator button character to the calculator window 
+         calcValue = calcValue + buttonValue;
          break;
    }
+
+   // Sets the value attribute of the calcWindow text area box to calcValue 
+   document.getElementById("calcWindow").value = calcValue;
+
+   // Puts the cursor focus within the calculator window 
+   document.getElementById("calcWindow").focus();
+}
+
+// Controls the keyboard actions within the calculator window 
+function calcKeys(e) {
+   // Declares local variables like the ones in buttonClick() 
+   var calcValue = document.getElementById("calcWindow").value;
+   var calcDecimal = document.getElementById("decimals").value;
+
+   switch (e.key) {
+      case "Delete":
+         // Erases the contents of the calculator window 
+         console.log(e.key); 
+         calcValue = "";
+         break;
+      case "Enter":
+         // Adds an expression to calcValue 
+         console.log(e.key); 
+         calcValue += " = " + evalEq(calcValue, calcDecimal); 
+         break; 
+      case "ArrowUp": 
+         // Adds an expression to calcValue 
+         console.log(e.key); 
+         calcValue = lastEq(calcWindow.value); 
+
+         // Prevents the browser from performing the default action 
+         e.preventDefault(); 
+   }
+   
+   // Sets the value attribute of calcWindow to calcValue 
+   document.getElementById("calcWindow").value = calcValue; 
 }
 
 /* ===================================================================== */
